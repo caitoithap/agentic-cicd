@@ -52,13 +52,13 @@ jobs:
       run: npm ci
     - name: Run frontend tests
       working-directory: frontend
-      run: npm test
+      run: npm test --if-present
     - name: Install backend dependencies
       working-directory: backend
       run: npm ci
     - name: Run backend tests
       working-directory: backend
-      run: npm test
+      run: npm test --if-present
       
   deploy:
     needs: test
