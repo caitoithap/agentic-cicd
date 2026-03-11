@@ -52,7 +52,7 @@ function App() {
 
     try {
 
-      const res = await fetch("http://localhost:5000/analyze_repo", {
+      const res = await fetch("https://agentic-cicd.onrender.com/analyze_repo", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
