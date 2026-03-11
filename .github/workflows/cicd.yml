@@ -72,3 +72,4 @@ jobs:
     - name: Deploy to production
       env:
         HOST: ${{ secrets.HOST }}
+      run: echo "Deploying to $HOST"
