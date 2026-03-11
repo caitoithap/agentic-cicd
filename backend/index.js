@@ -21,6 +21,33 @@ const anthropic = new Anthropic({
 });
 
 
+// ===== NEW: FUNCTION READ REPO TREE =====
+async function getRepoTree(dir, prefix = "") {
+
+  const items = await fs.readdir(dir);
+  let tree = "";
+
+  for (const item of items) {
+
+    const fullPath = path.join(dir, item);
+    const stat = await fs.stat(fullPath);
+
+    if (stat.isDirectory()) {
+
+      tree += `${prefix}${item}/\n`;
+      tree += await getRepoTree(fullPath, prefix + "  ");
+
+    } else {
+
+      tree += `${prefix}${item}\n`;
+
+    }
+  }
+
+  return tree;
+}
+
+
 // ===== HEALTH CHECK =====
 app.get("/", (req, res) => {
   res.json({
@@ -91,7 +118,9 @@ app.post("/analyze_repo", async (req, res) => {
   }
 
   const repoName = repo_url.split("/").pop().replace(".git", "");
-  const tempDir = `./temp/${repoName}`;
+
+  // UPDATED: use /tmp for Render
+  const tempDir = `/tmp/${repoName}`;
 
   try {
 
@@ -100,12 +129,11 @@ app.post("/analyze_repo", async (req, res) => {
     await fs.remove(tempDir);
     await git.clone(repo_url, tempDir);
 
-    // Read repo structure
-    const files = await fs.readdir(tempDir);
+    // ===== NEW: READ FULL TREE =====
+    const structure = await getRepoTree(tempDir);
 
-    const structure = files.join("\n");
-
-    console.log("Repo structure:", structure);
+    console.log("Repo tree:");
+    console.log(structure);
 
     const msg = await anthropic.messages.create({
       model: "claude-3-haiku-20240307",
@@ -116,7 +144,7 @@ app.post("/analyze_repo", async (req, res) => {
           content: `
 Analyze this repository structure and generate a GitHub Actions CI/CD pipeline.
 
-Repository structure:
+Repository tree:
 
 ${structure}
 
@@ -151,5 +179,5 @@ Generate ONLY YAML.
 
 // ===== START SERVER =====
 app.listen(PORT, () => {
-  console.log(` Backend running on http://localhost:${PORT}`);
+  console.log(`Backend running on http://localhost:${PORT}`);
 });
