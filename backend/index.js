@@ -31,7 +31,7 @@ app.get("/", (req, res) => {
 
 
 // ===== GENERATE PIPELINE FROM PROMPT =====
-app.post("/generate_pipeline", async (req, res) => {
+app.post("/generate", async (req, res) => {
 
   const { prompt } = req.body;
 
