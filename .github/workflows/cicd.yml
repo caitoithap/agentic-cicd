@@ -71,4 +71,4 @@ jobs:
     - uses: actions/checkout@v3
     - name: Deploy to production
       env:
-        HOST: ${{ secrets.HOST
+        HOST: ${{ secrets.HOST }}
