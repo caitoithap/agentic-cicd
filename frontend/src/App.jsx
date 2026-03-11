@@ -17,7 +17,7 @@ function App() {
 
     try {
 
-      const res = await fetch("http://localhost:5000/generate_pipeline", {
+      const res = await fetch("https://agentic-cicd.onrender.com/generate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
